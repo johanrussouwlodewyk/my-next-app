@@ -1,6 +1,7 @@
 //"use client";
 
 import ProductsChart from "@/components/products-chart";
+import SeedButton from "@/components/SeedButton";
 import Sidebar from "@/components/sidebar";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -12,21 +13,20 @@ export default async function DashboardPage() {
   const user = await getCurrentUser()
   const userId = user.id
 
-  const [totalProducts, lowStock, allProducts] = await Promise.all([
-    prisma.product.count({ where: { userId } }),
-    prisma.product.count({
+
+  const totalProducts = await prisma.product.count({ where: { userId } });
+  const lowStock = await prisma.product.count({
       where: {
         userId,
         lowStockAt: { not: null },
         quantity: { lte: 5 }
       }
-    }),
-    prisma.product.findMany({
+    });
+   const allProducts = await prisma.product.findMany({
       where: { userId },
       select: { price: true, quantity: true, createdAt: true }
-    })
+    });
 
-  ])
 
   const totalValue = allProducts.reduce((sum, product) => sum + (Number(product.price) * Number(product.quantity)), 0);
 
@@ -83,6 +83,7 @@ export default async function DashboardPage() {
             <div className="text-2xl font-semibold text-gray-900">
               <h1>Dashboard</h1>
               <p className="text-sm text-gray-500">Welcome back! Here is an overview of your inventory</p>
+              <SeedButton />
             </div>
           </div>
         </div>

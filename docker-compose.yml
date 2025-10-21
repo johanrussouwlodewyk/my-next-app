@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    ports:
+      - "5442:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: time_demo_dev
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+volumes:
+  pgdata:
+    # driver: local
+    # You can optionally add driver_opts here if needed.
